@@ -96,6 +96,12 @@
       <!-- 자바스크립트로 뷰가 교체되는 컨테이너 -->
     </main>
 
+    <!-- 복사 완료 안내 토스트 알림 (모바일 맞춤) -->
+    <div id="toastAlert" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900/95 text-white px-5 py-3 rounded-2xl text-sm font-bold shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center space-x-2">
+      <span class="text-emerald-400">✓</span>
+      <span id="toastMessage">결과 링크가 복사되었습니다!</span>
+    </div>
+
     <!-- 3. 푸터 영역 -->
     <footer class="pt-4 border-t border-gray-100 text-center text-xs text-gray-600 space-y-1">
       <p class="font-medium">이용후 님 · 이동애 님 · 이주희 님 · 이종석 님 전용 힐링 스페이스</p>
@@ -310,9 +316,89 @@
       currentQuestionIdx: 0,
       answers: {}, // { questionId: score (1~5) }
       chartInstance: null,
+      cachedResult: null,
+      isSharedView: false,
 
       init() {
+        // 공유 링크로 접속했는지 확인 (URL 해시 #share=...)
+        if (this.checkSharedUrl()) {
+          return;
+        }
         this.render();
+      },
+
+      // 공유 URL 감지 및 복원 로직
+      checkSharedUrl() {
+        try {
+          const hash = window.location.hash;
+          if (hash && hash.startsWith('#share=')) {
+            const encodedData = hash.replace('#share=', '');
+            const decodedJson = decodeURIComponent(escape(atob(encodedData)));
+            const payload = JSON.parse(decodedJson);
+
+            if (payload && payload.memberId && FAMILY_MEMBERS[payload.memberId]) {
+              this.currentMember = FAMILY_MEMBERS[payload.memberId];
+              this.cachedResult = payload.results;
+              this.isSharedView = true;
+              this.currentView = 'result';
+              this.render();
+              return true;
+            }
+          }
+        } catch (e) {
+          console.error("공유 데이터 복원 실패:", e);
+        }
+        return false;
+      },
+
+      // 공유 링크 생성 및 클립보드 복사
+      copyShareLink() {
+        const res = this.cachedResult || this.calculateResults();
+        const payload = {
+          memberId: this.currentMember.id,
+          results: res
+        };
+
+        const jsonString = JSON.stringify(payload);
+        const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
+        const baseUrl = window.location.origin + window.location.pathname;
+        const shareUrl = `${baseUrl}#share=${encodedData}`;
+
+        // 클립보드 복사 (모바일 iFrame 및 보안 브라우저 대응)
+        const dummyInput = document.createElement('textarea');
+        dummyInput.value = shareUrl;
+        dummyInput.style.position = 'fixed';
+        dummyInput.style.opacity = '0';
+        document.body.appendChild(dummyInput);
+        dummyInput.focus();
+        dummyInput.select();
+
+        let success = false;
+        try {
+          success = document.execCommand('copy');
+        } catch (err) {
+          success = false;
+        }
+        document.body.removeChild(dummyInput);
+
+        if (success) {
+          this.showToast("🔗 검사 결과 링크가 복사되었습니다! 가족에게 보내보세요.");
+        } else {
+          this.showToast("링크 복사에 실패했습니다. 브라우저 주소를 직접 복사해주세요.");
+        }
+      },
+
+      showToast(message) {
+        const toast = document.getElementById('toastAlert');
+        const toastMsg = document.getElementById('toastMessage');
+        if (!toast || !toastMsg) return;
+        toastMsg.innerText = message;
+        toast.classList.remove('opacity-0', 'pointer-events-none');
+        toast.classList.add('opacity-100');
+        setTimeout(() => {
+          toast.classList.remove('opacity-100');
+          toast.classList.add('opacity-0', 'pointer-events-none');
+        }, 3000);
       },
 
       selectMember(memberId) {
@@ -361,6 +447,11 @@
           this.chartInstance.destroy();
           this.chartInstance = null;
         }
+        // 공유 해시 제거하여 홈으로 복원
+        if (window.location.hash) {
+          history.replaceState(null, '', window.location.pathname);
+        }
+        this.isSharedView = false;
         this.currentView = 'home';
         this.currentMember = null;
         this.currentQuestionIdx = 0;
@@ -1038,8 +1129,13 @@
 
             <!-- 하단 복귀 및 공유 버튼군 -->
             <div class="pt-4 flex flex-col gap-3">
+              <button onclick="appState.copyShareLink()"
+                class="btn-touch w-full py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-2xl font-black text-lg shadow-lg shadow-orange-200 hover:brightness-105 active:scale-98 flex items-center justify-center space-x-2">
+                <span>🔗 이 결과 보고서 링크 복사하기</span>
+              </button>
+
               <button onclick="appState.goToHome()"
-                class="btn-touch w-full py-4 bg-gray-900 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-black transition">
+                class="btn-touch w-full py-3.5 bg-gray-900 text-white rounded-2xl font-black text-base shadow hover:bg-black transition">
                 다른 가족 검사하러 가기 🏠
               </button>
             </div>
