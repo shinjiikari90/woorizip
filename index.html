@@ -928,75 +928,7 @@
         }
 
         if (rdLvl >= 4) {
-          releaseList.push(`[보상의존(${tci.RD}) 진단] 가족이나 타인의 말 한마디, 차가운 표정 하나에 내 온 하루가 흔들리는 <strong>과도한 인정 욕구와 서운함</strong>`);
-        } else if (rdLvl <= 2) {
-          releaseList.push(`[보상의존(${tci.RD}) 진단] '말해봤자 뭐 하겠나, 나 혼자 삭이고 말지'라며 방어막을 치고 침묵으로 벽을 쌓아버리는 <strong>정서적 고립 습관</strong>`);
-        }
-
-        if (pLvl >= 4 && sdLvl <= 3) {
-          releaseList.push(`[인내력(${tci.P})·완벽주의 진단] 모든 것을 내 희생으로 지켜내야만 한다는 <strong>가혹한 자기 검열과 죄책감</strong>`);
-        }
-
-        if (tensionScore >= 70 || somaticScore >= 70) {
-          releaseList.push(`[심리생리 긴장 과부하(${tensionScore}점)] 턱관절과 어깨에 힘을 꽉 주고 항상 비상 대기 상태로 살아가는 <strong>신체적 과긴장 반응</strong>`);
-        }
-
-        // 2. 새롭게 시도해 보아야 할 것 (MBTI 유형 축 & TCI 강점 축 기반 동적 처방)
-        let tryList = [];
-        const isIntrovert = mbti[0] === 'I';
-        const isThinking = mbti[2] === 'T';
-        const isJudging = mbti[3] === 'J';
-
-        if (isThinking) {
-          tryList.push(`[MBTI ${mbti} 사고형(T) 처방] 가족과 대화할 때 논리적인 정답이나 인과관계를 지적하기 전에, <strong>"그랬구나, 참 속상했겠네"라는 공감의 추임새 10초 먼저 건네기</strong>`);
-        } else {
-          tryList.push(`[MBTI ${mbti} 감정형(F) 처방] 상대방의 날 선 말이나 무뚝뚝한 표현을 내 인격에 대한 거절로 받아들이지 말고, <strong>'저 사람의 표현 방식이 서툴 뿐이다'라며 감정 분리하기</strong>`);
-        }
-
-        if (isJudging) {
-          tryList.push(`[MBTI 판단형(J) 처방] 일이나 가족 계획이 내 뜻대로 풀리지 않더라도 <strong>"그럴 수도 있지, 인생에 뜻밖의 여백도 있는 법"</strong>이라며 계획의 틀을 20%만 열어두기`);
-        } else {
-          tryList.push(`[MBTI 인식형(P) 처방] 막연한 불안감이 밀려올 때 하루의 작은 루틴(일정한 기상, 10분 정리정돈)을 정해 <strong>생활의 예측 가능성 높이기</strong>`);
-        }
-
-        if (isIntrovert) {
-          tryList.push(`[MBTI 내향형(I) 처방] 가족 간의 갈등이나 긴장 이후에는 억지로 대화를 이어가기보다, <strong>온전히 혼자만의 침묵 속에서 심리적 배터리를 재충전할 안식처 확보하기</strong>`);
-        } else {
-          tryList.push(`[MBTI 외향형(E) 처방] 내 답답함을 밖으로 즉시 쏟아내기보다, 한 번의 깊은 심호흡으로 정제한 뒤 차분하게 전달하는 속도 조절하기`);
-        }
-
-        // 3. 일상 속 맞춤 마음 챙김 루틴 (가족 배경 + 신체화 반응 조합)
-        let routineItem = "";
-        if (m.id === 'father') {
-          routineItem = `봉화의 맑은 공기를 마시며 매일 아침 '4초 들이쉬고 6초 내쉬는 복식호흡'을 5분간 실천하세요. 원양어선과 거친 공장 현장을 뚫고 가족을 부양해 온 자신의 두 어깨를 직접 두드리며 <strong>"용후야, 참 질기게 잘 버텨왔다, 이제 좀 쉬어도 된다"</strong>고 나 자신에게 말을 건네보세요.`;
-        } else if (m.id === 'mother') {
-          routineItem = `운동이나 요가를 할 때 '불안을 없애기 위한 전투'가 아니라, 온전히 내 몸의 관절과 근육이 누리는 '휴식의 축제'로 받아들이세요. 저녁 잠자리에 들기 전, 따뜻한 차 한 잔과 함께 <strong>오늘 딸 주희나 아들 종석이에게서 발견한 고마운 순간 3가지를 마음속으로 떠올려보세요.</strong>`;
-        } else if (m.id === 'daughter') {
-          routineItem = `요양병원 퇴근 후 집에 돌아왔을 때 따뜻한 물로 샤워하며 하루 동안 수고한 내 오른팔과 오른발을 부드럽게 마사지해 주세요. <strong>"주희야, 오늘도 세상에 작은 보탬이 되어 정직하게 일하고 왔구나"</strong>라며 스스로를 꼭 안아주는 자존감 충전 시간을 가져보세요.`;
-        } else {
-          routineItem = `타지에서 혼자 모든 짐을 지고 가려 하지 마세요. 주말에는 가족 문제에 대한 생각의 스위치를 완전히 끄고, 오롯이 본인이 좋아하는 전시회나 자연 속 걷기를 즐기세요. <strong>가족을 돕는 최고의 방법은 '종석 님 본인이 가장 행복하고 건강하게 중심을 잡는 것'입니다.</strong>`;
-        }
-
-        return `
-          <div class="p-4 bg-white/90 rounded-2xl border border-rose-100 space-y-2 shadow-sm">
-            <p class="font-bold text-rose-900 text-sm sm:text-base flex items-center">
-              <span class="mr-1.5">🍂</span> 1. 실측 기질에 따라 과감히 내려놓아야 할 것
-            </p>
-            <div class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed space-y-1.5">
-              ${releaseList.map(item => `<div>• ${item}을 내려놓으세요.</div>`).join('')}
-            </div>
-          </div>
-
-          <div class="p-4 bg-white/90 rounded-2xl border border-emerald-100 space-y-2 shadow-sm">
-            <p class="font-bold text-emerald-900 text-sm sm:text-base flex items-center">
-              <span class="mr-1.5">🌱</span> 2. MBTI(${mbti}) & 기질 맞춤 새롭게 시도할 것
-            </p>
-            <div class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed space-y-1.5">
-              ${tryList.map(item => `<div>• ${item}을 시도해보세요.</div>`).join('')}
-            </div>
-          </div>
-
-          <div class="p-4 bg-white/90 rounded-2xl border border-amber-100 space-y-2 shadow-sm">
+          <div class="p-4 bg-amber-100/70 rounded-2xl border border-amber-100 space-y-2 shadow-sm">
             <p class="font-bold text-amber-900 text-sm sm:text-base flex items-center">
               <span class="mr-1.5">☕</span> 3. 일상 속 몸·마음 챙김 루틴
             </p>
@@ -1006,62 +938,130 @@
       },
 
       /* ----------------------------------------------------
-         TCI 기질별 상황 상호작용 심층 서술
+         TCI 기질별 상황 상호작용 심층 서술 (실측 점수 기반 완전 동적 엔진)
+         - 실제 검사에서 도출된 TCI 7대 척도(NS, HA, RD, P, SD, CO, ST)의 
+           강점 축과 취약 축을 실시간 판별하여 개인 맞춤형 문장 생성
          ---------------------------------------------------- */
       renderTciSituationInsight(member, tci) {
-        if (member.id === 'father') {
-          return `
-            <div class="space-y-3">
-              <div class="p-3.5 bg-white/80 rounded-xl border border-indigo-100">
-                <p class="text-indigo-950 font-bold mb-1">💪 [왜 견뎌낼 수 있었는가 - 기질의 긍정성]</p>
-                <p>이용후 님은 <strong>인내력(P)과 자율성(SD)이 매우 높은 '강철 같은 완벽주의자' 기질</strong>입니다. 가난했던 영천 농부 집안 출신에 원양어선과 험난한 회사 생활을 거치면서도 자수성가를 일궈낸 원동력은 고통 앞에서도 굴복하지 않는 극단적인 인내력 덕분이었습니다.</p>
-              </div>
-              <div class="p-3.5 bg-white/80 rounded-xl border border-rose-100">
-                <p class="text-rose-950 font-bold mb-1">⚠️ [왜 이 상황에서 유독 더 고통스러웠는가 - 기질의 그늘]</p>
-                <p>하지만 <strong>사회적 보상의존(RD)이 낮고 위험회피(HA)가 높아 감정 소통에 극도로 취약</strong>합니다. 처가와의 갈등이나 큰딸의 장애를 마주했을 때 정서적으로 타인과 슬픔을 나누지 못하고 고립을 택한 것은, 마음의 상처를 방어하기 위해 스스로 빗장을 걸어 잠그는 기질적 회피 성향 때문이었습니다.</p>
-              </div>
-            </div>
-          `;
-        } else if (member.id === 'mother') {
-          return `
-            <div class="space-y-3">
-              <div class="p-3.5 bg-white/80 rounded-xl border border-indigo-100">
-                <p class="text-indigo-950 font-bold mb-1">💪 [왜 견뎌낼 수 있었는가 - 기질의 긍정성]</p>
-                <p>이동애 님은 <strong>연대감(CO)과 자기초월(ST)이 매우 높은 '이타적 헌신가' 기질</strong>입니다. 첫째의 장애와 남편과의 거리감 속에서도 가정을 포기하지 않고 헌신할 수 있었던 것은 깊은 모성애와 영적 승화 능력 덕분이었습니다.</p>
-              </div>
-              <div class="p-3.5 bg-white/80 rounded-xl border border-rose-100">
-                <p class="text-rose-950 font-bold mb-1">⚠️ [왜 이 상황에서 유독 더 고통스러웠는가 - 기질의 그늘]</p>
-                <p>그러나 <strong>위험회피(HA)와 사회적 보상의존(RD)이 극도로 높습니다</strong>. 쌍둥이 시절부터 겪은 비교와 소외감으로 인해 '따뜻한 인정과 지지'에 대한 갈망이 매우 크지만, 남편의 차가운 태도와 처가 불화로 인해 애착 손상을 겪으며 불안과 신체 긴장이 만성화되었습니다.</p>
-              </div>
-            </div>
-          `;
-        } else if (member.id === 'daughter') {
-          return `
-            <div class="space-y-3">
-              <div class="p-3.5 bg-white/80 rounded-xl border border-indigo-100">
-                <p class="text-indigo-950 font-bold mb-1">💪 [왜 견뎌낼 수 있었는가 - 기질의 긍정성]</p>
-                <p>이주희 님은 <strong>자극추구(NS)가 낮고 자기초월(ST)과 연대감(CO)이 높은 맑고 순수한 평화주의자 기질</strong>입니다. 신체적 장애와 외로운 학창시절이라는 거친 운명 앞에서도 세상을 향해 분노나 비행으로 빗나가지 않고, 요양병원에서 노약자들을 정성껏 보조하며 조용히 사회의 한 구성원으로 땀 흘릴 수 있었던 것은 시련을 온순하게 받아들이는 고결한 내면의 힘 덕분이었습니다.</p>
-              </div>
-              <div class="p-3.5 bg-white/80 rounded-xl border border-rose-100">
-                <p class="text-rose-950 font-bold mb-1">⚠️ [왜 이 상황에서 유독 더 고통스러웠는가 - 기질의 그늘]</p>
-                <p>하지만 <strong>위험회피(HA)가 매우 높고 자율성(SD)이 낮습니다</strong>. 새로운 환경이나 낯선 사람에 대한 공포가 극심하여 사회적 관계를 넓히지 못했고, 혼담 상대의 갑작스러운 죽음이라는 비극은 이미 취약한 주희 씨의 마음에 회복하기 힘든 큰 트라우마를 남겼습니다. 어머니에 대한 정서적 의존도가 너무 높아 어머니가 불안해하면 본인도 함께 공황 수준의 위축을 경험하게 됩니다.</p>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-3">
-              <div class="p-3.5 bg-white/80 rounded-xl border border-indigo-100">
-                <p class="text-indigo-950 font-bold mb-1">💪 [왜 견뎌낼 수 있었는가 - 기질의 긍정성]</p>
-                <p>이종석 님은 <strong>자극추구(NS)와 자율성(SD), 인내력(P)이 균형 있게 발달한 도전적 개척가 기질</strong>입니다. 무거운 집안 분위기 속에서도 위축되지 않고 해외 인턴십과 다양한 대외 활동을 해내며 독립적인 인생을 개척할 수 있었던 것은 높은 탐색 욕구와 강한 자아 탄력성 덕분이었습니다. 가족 내에서 유일하게 바깥세상의 넓은 시야를 가족들에게 환기해 줄 수 있는 활력소입니다.</p>
-              </div>
-              <div class="p-3.5 bg-white/80 rounded-xl border border-rose-100">
-                <p class="text-rose-950 font-bold mb-1">⚠️ [왜 이 상황에서 유독 더 고통스러웠는가 - 기질의 그늘]</p>
-                <p>그러나 <strong>연대감(CO)과 보상의존(RD)이 높아 부모님의 기대와 슬픔에 지나치게 민감</strong>합니다. 부모님의 불화와 누나의 장애를 보며 '내가 집안을 일으켜 세우고 부모님을 기쁘게 해드려야 한다'는 무거운 구원자 콤플렉스를 짊어지게 되었습니다. 본인이 힘들고 외로워도 가족들에게는 완벽하고 밝은 모습만 보여주어야 한다는 압박감 때문에 정서적 번아웃을 혼자 삭이는 고독을 겪고 있습니다.</p>
-              </div>
-            </div>
-          `;
+        const levelScore = (lvl) => {
+          if (!lvl) return 3;
+          if (lvl.includes('초고')) return 5;
+          if (lvl.includes('고')) return 4;
+          if (lvl.includes('중저')) return 2;
+          if (lvl.includes('저')) return 1;
+          return 3;
+        };
+
+        const ns = levelScore(tci.NS);
+        const ha = levelScore(tci.HA);
+        const rd = levelScore(tci.RD);
+        const p  = levelScore(tci.P);
+        const sd = levelScore(tci.SD);
+        const co = levelScore(tci.CO);
+        const st = levelScore(tci.ST);
+
+        // 1. 강점 축 도출 (왜 견뎌낼 수 있었는가)
+        let strengthDrivers = [];
+        if (p >= 4) {
+          strengthDrivers.push(`<strong>극단적인 인내력[P: ${tci.P}]</strong>: 육체적 피로와 정신적 고립 앞에서도 책임을 완수해 내는 강철 같은 끈기`);
         }
+        if (sd >= 4) {
+          strengthDrivers.push(`<strong>높은 자율성[SD: ${tci.SD}]</strong>: 주변의 환경이나 결핍에 휘둘리지 않고 스스로 인생의 주도권을 쥐려는 자아 탄력성`);
+        }
+        if (co >= 4) {
+          strengthDrivers.push(`<strong>따뜻한 연대감[CO: ${tci.CO}]</strong>: 아무리 힘겨워도 가족과 타인을 버리지 않고 품어 안으려는 이타적 공감 능력`);
+        }
+        if (st >= 4) {
+          strengthDrivers.push(`<strong>초연한 자기초월[ST: ${tci.ST}]</strong>: 삶의 시련과 상처를 자연과 운명, 영적인 섭리 속에서 승화해내는 깊은 마음의 그릇`);
+        }
+        if (ns >= 4) {
+          strengthDrivers.push(`<strong>도전적인 자극추구[NS: ${tci.NS}]</strong>: 답답한 현실에 갇히지 않고 새로운 세상과 기회를 열어가려는 개척자적 에너지`);
+        }
+        if (ha <= 2) {
+          strengthDrivers.push(`<strong>낮은 위험회피[HA: ${tci.HA}]</strong>: 위험이나 미래의 불확실성에 주눅 들지 않고 일단 부딪쳐보는 대범함과 배짱`);
+        }
+
+        // 강점 기본값 보정
+        if (strengthDrivers.length === 0) {
+          strengthDrivers.push(`<strong>균형 잡힌 적응력</strong>: 어느 한쪽으로 치우치지 않고 묵묵히 일상을 견뎌내는 내면의 방어력`);
+        }
+
+        // 2. 취약 축 도출 (왜 이 상황에서 유독 더 고통스러웠는가)
+        let vulnerabilityDrivers = [];
+        if (ha >= 4) {
+          vulnerabilityDrivers.push(`<strong>극심한 위험회피[HA: ${tci.HA}]</strong>: 아직 오지 않은 불행이나 건강 악화를 끊임없이 염려하며 자율신경계가 항상 비상 대기 상태로 긴장하는 예기불안`);
+        }
+        if (rd >= 4) {
+          vulnerabilityDrivers.push(`<strong>높은 사회적 보상의존[RD: ${tci.RD}]</strong>: 상대방의 다정한 반응과 인정이 결핍될 때 '내가 거절당했다'는 깊은 애착 손상과 서러움`);
+        } else if (rd <= 2) {
+          vulnerabilityDrivers.push(`<strong>극도로 낮은 보상의존[RD: ${tci.RD}]</strong>: 슬픔이나 고통을 나눌 줄 모르고 '나 혼자 삭이면 된다'며 마음의 빗장을 걸어 잠그는 정서적 고립`);
+        }
+        if (p >= 4 && sd <= 3) {
+          vulnerabilityDrivers.push(`<strong>가혹한 완벽주의와 자기채찍질[P: ${tci.P}]</strong>: 모든 짐을 홀로 짊어져야 한다는 강박으로 신체가 무너질 때까지 스스로를 몰아세운 한계 초과`);
+        }
+        if (sd <= 2) {
+          vulnerabilityDrivers.push(`<strong>위축된 자율성[SD: ${tci.SD}]</strong>: 불가항력적인 환경이나 가족의 아픔 앞에서 '모든 것이 내 탓'이라는 무력감과 자책감`);
+        }
+        if (co <= 2) {
+          vulnerabilityDrivers.push(`<strong>낮은 연대감[CO: ${tci.CO}]</strong>: 타인의 서툰 행동이나 의견 차이를 너그럽게 넘기지 못하고 속으로 날 선 비판과 냉담함을 쌓아두는 피로`);
+        }
+
+        // 취약 기본값 보정
+        if (vulnerabilityDrivers.length === 0) {
+          vulnerabilityDrivers.push(`<strong>기질 간 긴장 완충 부족</strong>: 감정 표현의 서툼으로 인해 내면의 스트레스를 제때 환기하지 못하는 정서적 답답함`);
+        }
+
+        // 3. 가족별 고유 배경 맥락과의 융합 서술
+        let contextStrength = "";
+        let contextVulnerability = "";
+
+        if (member.id === 'father') {
+          contextStrength = `영천 농가 출신으로 원양어선의 거친 파도와 회사 현장의 중압감을 버텨내며 자수성가를 이룬 밑바탕에는 바로 이 기질적 자원이 결정적 버팀목이 되었습니다.`;
+          contextVulnerability = `하지만 처가와의 오랜 갈등이나 가족의 아픔을 마주했을 때, 감정을 표현하거나 위로받지 못한 채 홀로 봉화에서 고독을 삼켜야 했던 것은 이 취약성이 작용했기 때문입니다.`;
+        } else if (member.id === 'mother') {
+          contextStrength = `쌍둥이 시절의 상처와 큰딸 주희 씨를 돌보는 기나긴 헌신의 세월 속에서도 가정을 끝까지 지켜낼 수 있었던 것은 이 따뜻하고 숭고한 내면의 힘 덕분이었습니다.`;
+          contextVulnerability = `남편과의 소원해진 관계, 처가 식구들과의 불화 속에서 가슴속 불안과 긴장이 풀리지 않고 신체화(위장장애, 불면)로 이어졌던 근본 원인은 바로 이 기질적 통증 때문이었습니다.`;
+        } else if (member.id === 'daughter') {
+          contextStrength = `신체적 시련과 외로운 학창시절을 겪으면서도 빗나가지 않고 요양병원에서 묵묵히 타인을 도우며 성실하게 살아올 수 있었던 순수한 자산입니다.`;
+          contextVulnerability = `새로운 사람이나 환경에 대한 공포가 크고, 혼담 상대의 갑작스러운 사망이라는 비극 앞에서 세상 밖으로 마음을 열지 못하고 어머니 곁에 머물며 위축된 배경이기도 합니다.`;
+        } else {
+          contextStrength = `가족의 무거운 공기 속에서도 주눅 들지 않고 해외 인턴십과 다양한 도전을 해내며 가족의 든든한 희망으로 우뚝 설 수 있었던 핵심 동력입니다.`;
+          contextVulnerability = `하지만 '내가 부모님의 기대에 부응하고 가족의 매듭을 풀어야 한다'는 무거운 구원자 콤플렉스를 짊어진 채, 혼자 번아웃을 감내해야 했던 내적 원인이 바로 여기에 있습니다.`;
+        }
+
+        return `
+          <div class="space-y-3">
+            <div class="p-4 bg-white/90 rounded-2xl border border-indigo-200 shadow-sm space-y-2">
+              <div class="flex items-center justify-between">
+                <p class="text-indigo-950 font-black text-sm sm:text-base flex items-center">
+                  <span class="mr-1.5">💪</span> [실측 기질] 왜 모진 세월을 견뎌낼 수 있었는가? (기질의 강점)
+                </p>
+                <span class="text-xs px-2 py-0.5 bg-indigo-100 text-indigo-800 font-bold rounded">실측 데이터 기반</span>
+              </div>
+              <ul class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed space-y-1.5 list-disc list-inside">
+                ${strengthDrivers.map(d => `<li>${d}</li>`).join('')}
+              </ul>
+              <p class="text-xs sm:text-sm text-indigo-900 pt-1 font-semibold border-t border-indigo-50">
+                👉 ${contextStrength}
+              </p>
+            </div>
+
+            <div class="p-4 bg-white/90 rounded-2xl border border-rose-200 shadow-sm space-y-2">
+              <div class="flex items-center justify-between">
+                <p class="text-rose-950 font-black text-sm sm:text-base flex items-center">
+                  <span class="mr-1.5">⚠️</span> [실측 기질] 왜 이 상황에서 유독 더 고통스러웠는가? (기질의 그늘)
+                </p>
+                <span class="text-xs px-2 py-0.5 bg-rose-100 text-rose-800 font-bold rounded">실측 데이터 기반</span>
+              </div>
+              <ul class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed space-y-1.5 list-disc list-inside">
+                ${vulnerabilityDrivers.map(d => `<li>${d}</li>`).join('')}
+              </ul>
+              <p class="text-xs sm:text-sm text-rose-900 pt-1 font-semibold border-t border-rose-50">
+                👉 ${contextVulnerability}
+              </p>
+            </div>
+          </div>
+        `;
       },
 
       /* ----------------------------------------------------
