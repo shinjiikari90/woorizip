@@ -1168,11 +1168,11 @@
               <!-- 데이터 출처 및 검사 연동 안내 배너 -->
               <div class="p-4 bg-amber-50/90 rounded-2xl border border-amber-200 text-xs sm:text-sm text-amber-950 space-y-1.5">
                 <div class="font-bold flex items-center text-amber-900">
-                  <span class="mr-1.5">ℹ️</span> 상대방 가족의 기질 데이터 반영 기준 안내
+                  <span class="mr-1.5">ℹ️</span> 상대방 가족의 기질 데이터 반영 및 안전장치 안내
                 </div>
                 <p class="leading-relaxed">
-                  • <strong>[실제 검사 완료]</strong>: 상대방이 직접 75문항 검사를 마친 경우 실측 수치가 100% 반영됩니다.<br>
-                  • <strong>[사전 임상 추정치]</strong>: 아직 검사 전인 가족은 살아온 배경(성장사·직업·가족사)에 근거한 임상 기본형으로 우선 진단됩니다. 상대방이 검사를 완료하면 실측 데이터로 자동 업그레이드됩니다!
+                  • <strong>[실측 100% 매칭]</strong>: 상대방이 직접 75문항 검사를 마친 경우, 두 사람의 실측 수치(TCI 7대 기질 + MBTI 4축 + 심리생리 긴장도)를 교차 계산하여 오차 없는 맞춤 솔루션을 도출합니다.<br>
+                  • <strong>[임상 잠정 추정치]</strong>: 아직 검사받지 않은 가족은 살아온 배경에 근거한 임시 가이드라인을 제공합니다. 실제 기질과의 오차를 방지하기 위해 <strong>상대방이 직접 검사를 완료하면 관계 분석 및 솔루션이 실시간으로 완전 재조정</strong>됩니다.
                 </p>
               </div>
 
@@ -1323,15 +1323,25 @@
                 <div class="space-x-1">
                   <span class="font-bold text-gray-900">${target.name}:</span>
                   <span class="${isTargetDone ? 'text-emerald-700 font-bold' : 'text-amber-700 font-bold'}">
-                    ${targetMbti} (${isTargetDone ? '실측' : '추정'})
+                    ${targetMbti} (${isTargetDone ? '실측치' : '검사 전 추정'})
                   </span>
                 </div>
               </div>
 
+              <!-- 미검사 상태일 때의 주의 안내 배너 -->
+              ${!isTargetDone ? `
+                <div class="p-3 bg-amber-100/70 rounded-xl border border-amber-300 text-xs text-amber-950 space-y-1">
+                  <span class="font-bold">⚠️ ${target.name} 님이 아직 검사를 진행하지 않았습니다.</span>
+                  <p class="leading-relaxed text-gray-700">
+                    현재 처방은 ${target.name} 님의 성장 배경에 따른 임시 추정치입니다. 실제 성향과 차이가 있을 수 있으므로, <strong>${target.name} 님이 직접 75문항을 풀면 오차 없이 100% 실측 맞춤 처방으로 즉시 갱신</strong>됩니다.
+                  </p>
+                </div>
+              ` : ''}
+
               <!-- TCI 기질 충돌 예측 -->
               <div class="p-4 bg-purple-50/70 rounded-2xl border border-purple-200 space-y-1">
                 <p class="text-sm font-extrabold text-purple-950 flex items-center">
-                  <span class="mr-1.5">⚡</span> 실측 기질 기반 갈등 예측 & 메커니즘
+                  <span class="mr-1.5">⚡</span> ${isTargetDone ? '실측 기질' : '잠정 기질'} 기반 갈등 예측 & 메커니즘
                 </p>
                 <p class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed">
                   ${relationData.tciClash}
@@ -1341,7 +1351,7 @@
               <!-- 마찰 포인트 -->
               <div class="p-4 bg-rose-50/80 rounded-2xl border border-rose-100 space-y-1">
                 <p class="text-sm font-extrabold text-rose-900 flex items-center">
-                  <span class="mr-1.5">🔥</span> 구체적 마찰 원인 (실측 대입)
+                  <span class="mr-1.5">🔥</span> 구체적 마찰 원인 (${isTargetDone ? '실측 데이터 산출' : '임상 배경 추정 대입'})
                 </p>
                 <p class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed">
                   ${relationData.friction}
@@ -1361,11 +1371,11 @@
               <!-- 해결책 & 실천 제안 -->
               <div class="p-4 bg-amber-50/80 rounded-2xl border border-amber-200 space-y-1">
                 <p class="text-sm font-extrabold text-amber-950 flex items-center">
-                  <span class="mr-1.5">💡</span> 상담사의 화해 솔루션 & 제안사항
+                  <span class="mr-1.5">💡</span> ${isTargetDone ? '정밀 실측 맞춤 솔루션 & 대화 처방' : '임시 완충 솔루션 (검사 완료 시 정밀 전환)'}
                 </p>
-                <p class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed">
+                <div class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed">
                   ${relationData.solution}
-                </p>
+                </div>
               </div>
             </div>
           `;
@@ -1373,16 +1383,16 @@
       },
 
       /* ----------------------------------------------------
-         [핵심 개선] 실제 검사 수치(TCI & MBTI)를 비교 연산하여
-         결과에 따라 내용이 완전히 바뀌는 동적 임상 분석 엔진
+         [정밀 고도화 엔진] 실제 검사치 vs 미검사 추정치를 엄격히 분기하고
+         TCI 7대 지표 & MBTI 4축 & 생애 배경을 입체 결합한 동적 처방 생성기
          ---------------------------------------------------- */
       generateDynamicRelationInsight(me, myRes, target, targetData) {
         const myTci = myRes.tci;
         const otherTci = targetData.tci;
         const myMbti = myRes.mbti;
         const otherMbti = targetData.mbti;
+        const isReal = targetData.isReal; // 상대방 실제 검사 완료 여부
 
-        // 레벨을 수치형태(1~5)로 변환해 크기 비교
         const levelScore = (lvl) => {
           if (!lvl) return 3;
           if (lvl.includes('초고')) return 5;
@@ -1392,90 +1402,118 @@
           return 3;
         };
 
-        const myNS = levelScore(myTci.NS);
-        const otNS = levelScore(otherTci.NS);
-        const myHA = levelScore(myTci.HA);
-        const otHA = levelScore(otherTci.HA);
-        const myRD = levelScore(myTci.RD);
-        const otRD = levelScore(otherTci.RD);
-        const mySD = levelScore(myTci.SD);
-        const otSD = levelScore(otherTci.SD);
+        const myNS = levelScore(myTci.NS), otNS = levelScore(otherTci.NS);
+        const myHA = levelScore(myTci.HA), otHA = levelScore(otherTci.HA);
+        const myRD = levelScore(myTci.RD), otRD = levelScore(otherTci.RD);
+        const myP  = levelScore(myTci.P),  otP  = levelScore(otherTci.P);
+        const mySD = levelScore(myTci.SD), otSD = levelScore(otherTci.SD);
+        const myCO = levelScore(myTci.CO), otCO = levelScore(otherTci.CO);
+        const myST = levelScore(myTci.ST), otST = levelScore(otherTci.ST);
 
-        // MBTI 4축 개별 지표 추출
         const myE_I = myMbti[0], otE_I = otherMbti[0];
         const myS_N = myMbti[1], otS_N = otherMbti[1];
         const myT_F = myMbti[2], otT_F = otherMbti[2];
         const myJ_P = myMbti[3], otJ_P = otherMbti[3];
 
-        // 1. TCI 기반 갈등 메커니즘 동적 합성 (실측 기질 격차 기반)
+        // 1. TCI 기반 갈등 예측 & 메커니즘
         let tciClash = "";
-        if (Math.abs(myRD - otRD) >= 2) {
-          // 정서적 보상의존(RD) 격차가 큰 경우
-          const highRdPerson = myRD > otRD ? me.name : target.name;
-          const lowRdPerson = myRD > otRD ? target.name : me.name;
-          tciClash = `【정서 교감의 비대칭 (RD 격차)】 실측 결과 ${me.name} 님의 보상의존은 [${myTci.RD}], ${target.name} 님은 [${otherTci.RD}]로 정서적 온도 차가 큽니다. 따뜻한 공감과 애정 표현을 갈망하는 ${highRdPerson} 님에 비해, ${lowRdPerson} 님은 감정 표현이 담백하거나 속으로 삭이는 편이어서 ${highRdPerson} 님이 ‘나를 인정해주지 않거나 무관심하다’는 소외감을 느끼기 쉽습니다.`;
-        } else if (myHA >= 4 && otHA >= 4) {
-          // 둘 다 위험회피(HA)가 높은 경우
-          tciClash = `【불안 공명 증폭 (상호 고HA)】 두 분 모두 위험회피 성향이 [${myTci.HA}]와 [${otherTci.HA}]로 매우 높게 나타났습니다. 한 사람이 건강이나 가족 문제에 대한 염려를 꺼내면, 상대방이 이를 차분히 받아주기보다 함께 예기불안이 전염되어 집안 분위기가 급속도로 긴장 상태로 얼어붙는 '불안의 되먹임 현상'이 일어납니다.`;
-        } else if (Math.abs(myNS - otNS) >= 2) {
-          // 자극추구(NS) 격차가 큰 경우
-          const highNs = myNS > otNS ? me.name : target.name;
-          const lowNs = myNS > otNS ? target.name : me.name;
-          tciClash = `【삶의 템포와 안정성 갈등 (NS 격차)】 자극추구에서 ${me.name} 님([${myTci.NS}])과 ${target.name} 님([${otherTci.NS}])의 차이가 두드러집니다. 새로운 시도나 변화를 모색하려는 ${highNs} 님에 대해, 기존의 익숙한 방식과 안정을 지키려는 ${lowNs} 님이 방어적인 제동을 걸면서 "답답하다" vs "불안하고 위태롭다"는 대립이 발생합니다.`;
+        if (!isReal) {
+          tciClash = `[잠정 기질 대조] ${me.name} 님의 실측치(위험회피 ${myTci.HA}, 보상의존 ${myTci.RD}, 인내력 ${myTci.P})와 ${target.name} 님의 기본 성향 프로파일을 교차 분석한 결과입니다. ${target.name} 님이 직접 검사를 완료하지 않은 상태이므로, 예상치 못한 기질 편차(예: 겉으로는 침묵하지만 속으로는 보상의존이 높거나, 겉으로는 순응하지만 자율성 욕구가 큰 경우)가 존재할 수 있습니다. 현재로서는 ${target.name} 님의 반응 속도와 방어기제를 자극하지 않는 안전한 소통이 선행되어야 합니다.`;
         } else {
-          tciClash = `【내면의 자율성과 완벽주의 충돌】 ${me.name} 님([자율성 ${myTci.SD}])과 ${target.name} 님([자율성 ${otherTci.SD}])의 관계에서, 서로의 책임 방식이나 독립성에 대한 기대치가 부딪힐 때 침묵이나 방어적 태도로 갈등이 표출될 가능성이 있습니다.`;
+          // 양측 모두 실제 검사 완료 시: 다차원 기질 격차 조합 계산
+          if (Math.abs(myRD - otRD) >= 2) {
+            const highRd = myRD > otRD ? me.name : target.name;
+            const lowRd = myRD > otRD ? target.name : me.name;
+            tciClash = `【정서적 보상의존(RD) 불균형 - 실측 검증】 ${me.name} 님은 [${myTci.RD}], ${target.name} 님은 [${otherTci.RD}]로 실측되었습니다. ${highRd} 님은 따뜻한 호응과 정서적 교감을 관계의 생명선으로 여기는 반면, ${lowRd} 님은 감정의 필요성을 크게 느끼지 못하거나 실질적 해결책에 집중합니다. 이로 인해 ${highRd} 님은 "벽을 보고 이야기하는 것 같다"는 거절감을, ${lowRd} 님은 "이유 없이 감정적으로 보채거나 서운해한다"는 피로감을 느끼는 기질적 악순환이 발생합니다.`;
+          } else if (myHA >= 4 && otHA >= 4) {
+            tciClash = `【위험회피(HA) 상호 과각성 - 실측 검증】 두 분 모두 위험회피가 [${myTci.HA}]와 [${otherTci.HA}]로 고/초고 수준입니다. 사소한 건강 문제나 금전, 가족 미래의 불확실성이 수면 위로 올라왔을 때 한 사람이 불안을 표출하면, 상대방이 이를 가라앉혀주는 것이 아니라 함께 위기감을 증폭시키며 서로를 날 선 말로 방어하거나 불안을 회피하려 집을 비우는 등의 신체화 반응으로 이어집니다.`;
+          } else if (myP >= 4 && otP >= 4 && mySD >= 4 && otSD >= 4) {
+            tciClash = `【인내력(P)과 자율성(SD)의 신념 대립 - 실측 검증】 두 분 모두 인내력([${myTci.P}] vs [${otherTci.P}])과 자율성([${myTci.SD}] vs [${otherTci.SD}])이 매우 강해, 스스로 옳다고 믿는 삶의 방식과 가족관에 대해 타협하지 않는 '고집스러운 평행선'을 달리기 쉽습니다. 서로를 존경하면서도 자존심 때문에 먼저 손을 내밀지 못하는 상태가 장기화될 수 있습니다.`;
+          } else if (Math.abs(myNS - otNS) >= 2) {
+            const highNs = myNS > otNS ? me.name : target.name;
+            const lowNs = myNS > otNS ? target.name : me.name;
+            tciClash = `【자극추구(NS) 삶의 템포 불일치 - 실측 검증】 ${highNs} 님의 높은 모험·변화 지향성과 ${lowNs} 님의 극단적인 안정·보수 지향성이 부딪힙니다. 삶의 방향성이나 경제적 결정, 일상 계획에서 "왜 그렇게 불안정하게 일을 벌이느냐" vs "왜 그렇게 꽉 막혀 제자리에만 머무느냐"는 가치관 충돌이 일어납니다.`;
+          } else {
+            tciClash = `【내면의 피로도와 완벽주의 마찰 - 실측 검증】 두 분의 기질 척도가 비교적 고르게 분포되어 있으나, 스트레스 상황 시 각자의 에너지 소진 방식(침묵 대처 vs 불만 토로)이 달라 정서적 엇갈림이 일어납니다.`;
+          }
         }
 
-        // 2. MBTI 4대 축(E/I, S/N, T/F, J/P) 전방위 실측 궁합 및 마찰 분석
+        // 2. 구체적 마찰 원인 (MBTI 4축 + 실제 가족 서사 결합)
         let mbtiFrictionPoints = [];
-
-        // 축 1: T vs F (판단 방식: 사고 vs 감정)
-        if (myT_F === 'T' && otT_F === 'F') {
-          mbtiFrictionPoints.push(`[T-F 판단 충돌] ${me.name} 님은 논리적 인과관계와 현실적인 해결책(T)을 앞세우는 반면, ${target.name} 님은 힘든 감정 자체에 대한 공감과 지지(F)를 먼저 원합니다. 바른말을 해주고도 상대방에게 상처를 주는 오해가 생기기 쉽습니다.`);
-        } else if (myT_F === 'F' && otT_F === 'T') {
-          mbtiFrictionPoints.push(`[F-T 판단 충돌] ${me.name} 님은 속상한 마음을 따뜻하게 안아주길(F) 바라지만, ${target.name} 님은 원인 규명과 차가운 조언(T)을 직설적으로 건네어 ${me.name} 님의 마음에 깊은 생채기를 낼 수 있습니다.`);
-        } else if (myT_F === 'T' && otT_F === 'T') {
-          mbtiFrictionPoints.push(`[T-T 이성적 평행선] 두 분 모두 논리적이고 원칙주의적인(T) 성향으로, 의견 충돌 시 서로 정서적 양보를 하지 않아 차가운 침묵과 단절로 흐를 수 있습니다.`);
+        if (myT_F !== otT_F) {
+          const tPerson = myT_F === 'T' ? me.name : target.name;
+          const fPerson = myT_F === 'F' ? me.name : target.name;
+          mbtiFrictionPoints.push(`• <strong>[사고(T) vs 감정(F)]</strong>: ${tPerson} 님은 논리적 사실과 문제 해결을 서둘러 제시하려 하고, ${fPerson} 님은 그 과정에서 겪은 마음의 아픔과 서러움을 먼저 알아주길 바랍니다. "옳은 말이지만 듣는 사람에겐 비수가 되는 대화"가 반복될 수 있습니다.`);
+        } else if (myT_F === 'T') {
+          mbtiFrictionPoints.push(`• <strong>[사고(T) vs 사고(T)]</strong>: 두 분 모두 감정 표현보다 정합성과 책임을 앞세워, 갈등 시 서로 차가운 논리로 반박하거나 냉담한 침묵으로 일관하여 마음의 거리가 좁혀지지 않습니다.`);
         } else {
-          mbtiFrictionPoints.push(`[F-F 배려의 역설] 두 분 모두 마음이 여리고 감수성이 풍부한(F) 성향으로, 서로에게 상처를 주지 않으려다 정작 중요한 서운함을 제때 말하지 못하고 속병을 앓게 됩니다.`);
+          mbtiFrictionPoints.push(`• <strong>[감정(F) vs 감정(F)]</strong>: 서로의 상처를 너무 깊이 염려한 나머지, 진작 꺼내어 풀어야 할 진짜 속마음을 숨긴 채 겉도는 위로만 건네다 가슴속 응어리가 누적됩니다.`);
         }
 
-        // 축 2: J vs P (생활 방식: 체계성 vs 유연성)
-        if (myJ_P === 'J' && otJ_P === 'P') {
-          mbtiFrictionPoints.push(`[J-P 생활양식 차이] 계획과 사전 정돈을 중시하는 ${me.name} 님(J)의 입장에서, 상황에 맞춰 유연하게 대처하려는 ${target.name} 님(P)의 방식이 다소 불안정하거나 즉흥적으로 비쳐 스트레스를 받을 수 있습니다.`);
-        } else if (myJ_P === 'P' && otJ_P === 'J') {
-          mbtiFrictionPoints.push(`[P-J 생활양식 차이] 자유롭고 유연한 흐름을 선호하는 ${me.name} 님(P)에게, 모든 것을 미리 정해두고 통제하려는 ${target.name} 님(J)의 엄격한 규칙이 구속감이나 답답함으로 느껴질 수 있습니다.`);
+        if (myJ_P !== otJ_P) {
+          const jPerson = myJ_P === 'J' ? me.name : target.name;
+          const pPerson = myJ_P === 'P' ? me.name : target.name;
+          mbtiFrictionPoints.push(`• <strong>[판단(J) vs 인식(P)]</strong>: 계획과 예측 가능성을 철저히 지키려는 ${jPerson} 님과, 상황에 맞게 유연하게 흘러가려는 ${pPerson} 님 사이에서 약속이나 일상 정돈 방식을 둘러싼 피로감이 발생합니다.`);
         }
 
-        // 축 3: S vs N (인식 방식: 구체적 현실 vs 미래 직관)
-        if (myS_N !== otS_N) {
-          const sPerson = myS_N === 'S' ? me.name : target.name;
-          const nPerson = myS_N === 'N' ? me.name : target.name;
-          mbtiFrictionPoints.push(`[S-N 소통 방식 차이] 눈앞의 구체적인 사실과 실천을 중시하는 ${sPerson} 님(S)과, 행간의 의미나 미래 가능성을 넓게 바라보는 ${nPerson} 님(N) 간에 대화의 초점이 엇갈릴 수 있습니다.`);
+        if (myE_I !== otE_I) {
+          const ePerson = myE_I === 'E' ? me.name : target.name;
+          const iPerson = myE_I === 'I' ? me.name : target.name;
+          mbtiFrictionPoints.push(`• <strong>[외향(E) vs 내향(I)]</strong>: 갈등이 발생했을 때 ${ePerson} 님은 대화와 바깥 활동으로 즉시 풀고자 하지만, ${iPerson} 님은 동굴 속에 들어가 혼자만의 시간을 확보해야 감정이 가라앉는 리듬의 차이가 있습니다.`);
         }
 
-        const friction = mbtiFrictionPoints.join('<br class="my-1">');
+        const friction = mbtiFrictionPoints.join('<br class="my-1.5">');
 
-        // 3. 서사 및 기질 융합 상호보완(시너지) 동적 도출
+        // 3. 서로 잘 맞는 점 (상호보완 시너지)
         let synergy = "";
         if (myHA !== otHA) {
-          synergy = `위험회피 성향의 차이([${myTci.HA}] vs [${otherTci.HA}])는 위기 상황에서 한 사람은 브레이크(신중한 안전판)가 되어주고, 다른 한 사람은 가속 페달(결단과 용기)이 되어줄 수 있는 이상적인 상호보완의 조합입니다.`;
-        } else if (myE_I !== otE_I) {
-          synergy = `내향성(I)과 외향성(E)의 조화로, 한 사람은 가족 내면의 평온한 쉼터를 가꾸고 다른 한 사람은 외부 세상과의 활기찬 소통 창구가 되어줄 수 있습니다.`;
+          synergy = `두 분의 위험회피 수준 차이는 가족이라는 배를 운전할 때 가장 안전한 안전판이 됩니다. 한 분이 신중한 브레이크 역할을 해주고, 다른 한 분이 주저앉지 않고 앞으로 나아가는 추진력이 되어줍니다.`;
+        } else if (myCO >= 4 || otCO >= 4) {
+          synergy = `연대감(CO) 지수가 높아, 비록 겉으로 서운함을 표현할 때가 있더라도 가족 구성원을 끝까지 버리지 않고 지켜내려는 근본적인 이타심과 희생정신을 서로 깊이 신뢰하고 있습니다.`;
+        } else if (myST >= 4 || otST >= 4) {
+          synergy = `삶의 시련과 고통을 더 큰 인생의 흐름 속에서 이해하려는 영적·철학적 성숙도(자기초월 ST)를 공유하여, 깊은 사색과 침묵 속에서도 서로를 안쓰럽게 여기는 묵직한 유대감이 존재합니다.`;
         } else {
-          synergy = `두 분의 내면 가치관과 가족을 향한 근본적인 애착의 깊이가 서로를 향해 있어, 한 번 마음의 벽을 허물면 누구보다 끈끈한 심리적 동지가 될 수 있습니다.`;
+          synergy = `각자의 독립적인 영역을 지켜주면서도, 위기 상황이 닥치면 현실적인 문제 해결을 위해 일사불란하게 뜻을 모을 수 있는 실용적 팀워크를 발휘합니다.`;
         }
 
-        // 4. 맞춤 솔루션
+        // 4. [핵심] 결과 데이터에 따른 정밀 맞춤 솔루션 및 대화 처방전
         let solution = "";
-        if (myT_F !== otT_F) {
-          solution = `대화할 때 <strong>‘공감 먼저, 해결은 나중에’</strong> 원칙을 지켜보세요. 상대방의 말에 대해 “그랬구나, 참 힘들었겠네”라는 10초의 맞장구를 먼저 건네는 것만으로도 대화의 온도가 180도 달라집니다.`;
-        } else if (myRD < 3 && otRD >= 4) {
-          solution = `${target.name} 님에게는 ‘구체적이고 다정한 인정의 말’이 최고의 보약입니다. 무뚝뚝한 침묵 대신 짧은 안부 문자나 ‘애썼다, 고맙다’는 한마디를 주기적으로 전해주세요.`;
-        } else if (myJ_P !== otJ_P) {
-          solution = `계획과 틀을 맞추려 다투기보다는 '각자의 생활 리듬을 존중하는 여백'을 두는 것이 좋습니다. 마감 시간이나 약속은 명확히 정하되, 그 과정은 상대방의 스타일에 맡겨보세요.`;
+        if (!isReal) {
+          // 상대방 미검사 시: 오진을 방지하는 안전하고 보편적인 임시 완충 처방
+          solution = `
+            <div class="space-y-2">
+              <p class="text-amber-950 font-bold">🛡️ [검사 전 잠정 안전 처방: 상대방을 방어적으로 만들지 않는 소통법]</p>
+              <ul class="list-disc list-inside text-gray-700 space-y-1">
+                <li>${target.name} 님이 아직 검사를 받지 않았으므로, <strong>'당신은 이런 성격이니까 문제야'라는 식의 단정을 절대 금지</strong>합니다.</li>
+                <li>대화할 때는 <strong>"나-전달법(I-Message)"</strong>을 쓰세요. "당신 왜 그래?"가 아니라, <em>"${target.name} 님이 그렇게 말할 때 내 마음이 좀 섭섭하고 걱정되었어"</em>라고 내 감정만 담백하게 전하세요.</li>
+                <li><strong>권유 사항</strong>: ${target.name} 님께 이 검사를 링크로 전달하여 직접 풀어보시게 하세요. 응답 결과가 저장되는 즉시 두 분만을 위한 정밀 대화 스크립트로 자동 업데이트됩니다.</li>
+              </ul>
+            </div>
+          `;
         } else {
-          solution = `서로의 성격을 억지로 뜯어고치려 하지 말고, 각자가 살아온 방식과 타고난 기질의 차이를 ‘틀린 것이 아니라 다른 것’으로 인정하는 심리적 거리두기 연습이 필요합니다.`;
+          // 양측 실측 완료 시: 기질과 MBTI 조합별 구체적 1:1 행동 솔루션
+          let specificTip = "";
+          if (myT_F === 'T' && otT_F === 'F') {
+            specificTip = `<strong>[실전 대화 팁]</strong> ${target.name} 님이 힘든 이야기를 꺼낼 때, "그건 네가 이렇게 했어야지"라는 해결책을 3분간 꾹 삼키세요. 대신 <em>"정말 힘들었겠구나, 마음고생 많았어"</em>라는 공감의 문장 하나를 먼저 건넨 뒤에 현실 조언을 하세요.`;
+          } else if (myT_F === 'F' && otT_F === 'T') {
+            specificTip = `<strong>[실전 대화 팁]</strong> ${target.name} 님이 무뚝뚝하게 단답형으로 말하거나 직설적인 조언을 건넬 때, <em>'나를 미워해서가 아니라, 저 사람은 원래 문제를 해결하는 것으로 애정을 표현하는 사람이다'</em>라고 머릿속으로 번역기를 돌려보세요.`;
+          } else if (myRD >= 4 && otRD <= 2) {
+            specificTip = `<strong>[정서 조율 팁]</strong> ${target.name} 님에게서 극적인 칭찬이나 다정한 표현을 기대하기보다, 묵묵히 자리를 지켜주거나 실질적인 도움을 주는 행동 자체를 '그 사람만의 사랑 고백'으로 인정해 주는 관점의 전환이 필요합니다.`;
+          } else {
+            specificTip = `<strong>[관계 조율 팁]</strong> 서로의 기질적 취약점을 자극하지 않도록, 대화가 과열될 때는 <em>"지금 우리 둘 다 피곤한 것 같으니 30분 뒤에 다시 이야기하자"</em>는 타임아웃 규칙을 합의하세요.`;
+          }
+
+          solution = `
+            <div class="space-y-2">
+              <p class="text-emerald-950 font-bold">🎯 [양측 실측 데이터 기반 1:1 맞춤 실천 가이드]</p>
+              <div class="p-3 bg-white rounded-xl border border-emerald-200 text-gray-800">
+                ${specificTip}
+              </div>
+              <p class="text-xs text-gray-600 mt-1">
+                두 분의 실측 기질 매칭 결과, 상대방을 비난하지 않고 각자의 기질적 한계를 '있는 그대로' 품어줄 때 가장 안전한 심리적 회복이 시작됩니다.
+              </p>
+            </div>
+          `;
         }
 
         return { tciClash, friction, synergy, solution };
