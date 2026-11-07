@@ -895,50 +895,112 @@
 
       /* ----------------------------------------------------
          상담사의 3대 실천 처방전 (내려놓을 것 & 시도할 것)
+         - 실측 MBTI, TCI 7대 기질, 심리생리 수치를 결합한 완전 동적 엔진
          ---------------------------------------------------- */
       generateSuggestions(m, res) {
-        let releaseItem = "";
-        let tryItem = "";
-        let dailyItem = "";
+        const tci = res.tci;
+        const mbti = res.mbti;
+        const scores = res.scores;
 
-        if (m.id === 'father') {
-          releaseItem = "‘가족의 모든 문제를 내 힘으로 완벽히 통제해야 한다’는 오래된 강박과 서운했던 과거의 앙금을 이제 봉화의 맑은 바람 속에 내려놓으세요.";
-          tryItem = "감정 표현이 서투르더라도 한 달에 한두 번, 자식들에게 ‘밥은 잘 먹고 다니냐’는 짧고 따뜻한 문자 한 통을 먼저 건네보세요.";
-          dailyItem = "매일 아침 10분간 따뜻한 차를 마시며, 가장으로서 치열하게 살아온 자신의 어깨를 스스로 토닥여주는 시간을 가지세요.";
-        } else if (m.id === 'mother') {
-          releaseItem = "‘내가 더 잘했더라면 주희가 아프지 않았을 텐데’라는 평생의 죄책감과, 남편에 대한 채워지지 않는 기대감을 이제 내려놓으세요.";
-          tryItem = "운동이나 불교 수행을 고통을 잊기 위한 도피처가 아닌, 온전히 내 몸과 마음의 기쁨을 누리는 순수한 시간으로 받아들이세요.";
-          dailyItem = "딸 주희를 아픈 아이가 아닌 든든한 동반자로 바라보고, 하루 한 번 ‘주희야 고맙다’는 칭찬을 나눠보세요.";
-        } else if (m.id === 'daughter') {
-          releaseItem = "‘나는 남들보다 부족하고 가족에게 짐이 되는 존재다’라는 위축감과 외로움의 그림자를 과감히 떨쳐내세요.";
-          tryItem = "요양병원에서 어르신들을 돕고 스스로 월급을 받는 어엿한 사회인이라는 자부심을 품고, 좋아하는 취미나 작은 산책을 즐겨보세요.";
-          dailyItem = "어머니에게 따뜻한 포옹과 함께 ‘엄마, 오늘도 힘내요’라는 다정한 눈인사를 먼저 건네보세요.";
+        const levelScore = (lvl) => {
+          if (!lvl) return 3;
+          if (lvl.includes('초고')) return 5;
+          if (lvl.includes('고')) return 4;
+          if (lvl.includes('중저')) return 2;
+          if (lvl.includes('저')) return 1;
+          return 3;
+        };
+
+        const haLvl = levelScore(tci.HA);
+        const rdLvl = levelScore(tci.RD);
+        const nsLvl = levelScore(tci.NS);
+        const sdLvl = levelScore(tci.SD);
+        const pLvl = levelScore(tci.P);
+        const tensionScore = scores['자율신경 긴장도'] || 50;
+        const somaticScore = scores['신체화 반응'] || 50;
+
+        // 1. 내려놓을 것 (TCI 취약 축 & 심리생리 긴장도 기반 동적 처방)
+        let releaseList = [];
+        if (haLvl >= 4) {
+          releaseList.push(`[위험회피(${tci.HA}) 진단] '혹시 나쁜 일이 생기면 어쩌지'라며 아직 오지 않은 미래를 미리 앞당겨 괴로워하는 <strong>예기불안과 통제 강박</strong>`);
+        } else if (haLvl <= 2) {
+          releaseList.push(`[위험회피(${tci.HA}) 진단] 내 몸의 피로 신호를 무시하고 '이 정도쯤이야' 하며 한계치까지 밀어붙이는 <strong>과도한 낙관과 무리한 버팀</strong>`);
+        }
+
+        if (rdLvl >= 4) {
+          releaseList.push(`[보상의존(${tci.RD}) 진단] 가족이나 타인의 말 한마디, 차가운 표정 하나에 내 온 하루가 흔들리는 <strong>과도한 인정 욕구와 서운함</strong>`);
+        } else if (rdLvl <= 2) {
+          releaseList.push(`[보상의존(${tci.RD}) 진단] '말해봤자 뭐 하겠나, 나 혼자 삭이고 말지'라며 방어막을 치고 침묵으로 벽을 쌓아버리는 <strong>정서적 고립 습관</strong>`);
+        }
+
+        if (pLvl >= 4 && sdLvl <= 3) {
+          releaseList.push(`[인내력(${tci.P})·완벽주의 진단] 모든 것을 내 희생으로 지켜내야만 한다는 <strong>가혹한 자기 검열과 죄책감</strong>`);
+        }
+
+        if (tensionScore >= 70 || somaticScore >= 70) {
+          releaseList.push(`[심리생리 긴장 과부하(${tensionScore}점)] 턱관절과 어깨에 힘을 꽉 주고 항상 비상 대기 상태로 살아가는 <strong>신체적 과긴장 반응</strong>`);
+        }
+
+        // 2. 새롭게 시도해 보아야 할 것 (MBTI 유형 축 & TCI 강점 축 기반 동적 처방)
+        let tryList = [];
+        const isIntrovert = mbti[0] === 'I';
+        const isThinking = mbti[2] === 'T';
+        const isJudging = mbti[3] === 'J';
+
+        if (isThinking) {
+          tryList.push(`[MBTI ${mbti} 사고형(T) 처방] 가족과 대화할 때 논리적인 정답이나 인과관계를 지적하기 전에, <strong>"그랬구나, 참 속상했겠네"라는 공감의 추임새 10초 먼저 건네기</strong>`);
         } else {
-          releaseItem = "‘내가 부모님의 갈등을 해결하고 집안을 완전히 바로 세워야 한다’는 과도한 구원자적 중압감을 내려놓으세요.";
-          tryItem = "봉화에 계신 아버지와 어머니 양쪽에 균형 있는 다리 역할을 하되, 감정적으로 휘말리지 않고 담담한 경청자로 머물러주세요.";
-          dailyItem = "자신의 커리어와 행복을 가장 우선순위에 두고, 가족의 짐을 혼자 짊어지지 않는 건강한 심리적 경계선을 유지하세요.";
+          tryList.push(`[MBTI ${mbti} 감정형(F) 처방] 상대방의 날 선 말이나 무뚝뚝한 표현을 내 인격에 대한 거절로 받아들이지 말고, <strong>'저 사람의 표현 방식이 서툴 뿐이다'라며 감정 분리하기</strong>`);
+        }
+
+        if (isJudging) {
+          tryList.push(`[MBTI 판단형(J) 처방] 일이나 가족 계획이 내 뜻대로 풀리지 않더라도 <strong>"그럴 수도 있지, 인생에 뜻밖의 여백도 있는 법"</strong>이라며 계획의 틀을 20%만 열어두기`);
+        } else {
+          tryList.push(`[MBTI 인식형(P) 처방] 막연한 불안감이 밀려올 때 하루의 작은 루틴(일정한 기상, 10분 정리정돈)을 정해 <strong>생활의 예측 가능성 높이기</strong>`);
+        }
+
+        if (isIntrovert) {
+          tryList.push(`[MBTI 내향형(I) 처방] 가족 간의 갈등이나 긴장 이후에는 억지로 대화를 이어가기보다, <strong>온전히 혼자만의 침묵 속에서 심리적 배터리를 재충전할 안식처 확보하기</strong>`);
+        } else {
+          tryList.push(`[MBTI 외향형(E) 처방] 내 답답함을 밖으로 즉시 쏟아내기보다, 한 번의 깊은 심호흡으로 정제한 뒤 차분하게 전달하는 속도 조절하기`);
+        }
+
+        // 3. 일상 속 맞춤 마음 챙김 루틴 (가족 배경 + 신체화 반응 조합)
+        let routineItem = "";
+        if (m.id === 'father') {
+          routineItem = `봉화의 맑은 공기를 마시며 매일 아침 '4초 들이쉬고 6초 내쉬는 복식호흡'을 5분간 실천하세요. 원양어선과 거친 공장 현장을 뚫고 가족을 부양해 온 자신의 두 어깨를 직접 두드리며 <strong>"용후야, 참 질기게 잘 버텨왔다, 이제 좀 쉬어도 된다"</strong>고 나 자신에게 말을 건네보세요.`;
+        } else if (m.id === 'mother') {
+          routineItem = `운동이나 요가를 할 때 '불안을 없애기 위한 전투'가 아니라, 온전히 내 몸의 관절과 근육이 누리는 '휴식의 축제'로 받아들이세요. 저녁 잠자리에 들기 전, 따뜻한 차 한 잔과 함께 <strong>오늘 딸 주희나 아들 종석이에게서 발견한 고마운 순간 3가지를 마음속으로 떠올려보세요.</strong>`;
+        } else if (m.id === 'daughter') {
+          routineItem = `요양병원 퇴근 후 집에 돌아왔을 때 따뜻한 물로 샤워하며 하루 동안 수고한 내 오른팔과 오른발을 부드럽게 마사지해 주세요. <strong>"주희야, 오늘도 세상에 작은 보탬이 되어 정직하게 일하고 왔구나"</strong>라며 스스로를 꼭 안아주는 자존감 충전 시간을 가져보세요.`;
+        } else {
+          routineItem = `타지에서 혼자 모든 짐을 지고 가려 하지 마세요. 주말에는 가족 문제에 대한 생각의 스위치를 완전히 끄고, 오롯이 본인이 좋아하는 전시회나 자연 속 걷기를 즐기세요. <strong>가족을 돕는 최고의 방법은 '종석 님 본인이 가장 행복하고 건강하게 중심을 잡는 것'입니다.</strong>`;
         }
 
         return `
-          <div class="p-4 bg-white/90 rounded-2xl border border-emerald-100 space-y-1.5 shadow-sm">
+          <div class="p-4 bg-white/90 rounded-2xl border border-rose-100 space-y-2 shadow-sm">
             <p class="font-bold text-rose-900 text-sm sm:text-base flex items-center">
-              <span class="mr-1.5">🍂</span> 1. 과감히 내려놓아야 할 것
+              <span class="mr-1.5">🍂</span> 1. 실측 기질에 따라 과감히 내려놓아야 할 것
             </p>
-            <p class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed">${releaseItem}</p>
+            <div class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed space-y-1.5">
+              ${releaseList.map(item => `<div>• ${item}을 내려놓으세요.</div>`).join('')}
+            </div>
           </div>
 
-          <div class="p-4 bg-white/90 rounded-2xl border border-emerald-100 space-y-1.5 shadow-sm">
+          <div class="p-4 bg-white/90 rounded-2xl border border-emerald-100 space-y-2 shadow-sm">
             <p class="font-bold text-emerald-900 text-sm sm:text-base flex items-center">
-              <span class="mr-1.5">🌱</span> 2. 새롭게 시도해 보아야 할 것
+              <span class="mr-1.5">🌱</span> 2. MBTI(${mbti}) & 기질 맞춤 새롭게 시도할 것
             </p>
-            <p class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed">${tryItem}</p>
+            <div class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed space-y-1.5">
+              ${tryList.map(item => `<div>• ${item}을 시도해보세요.</div>`).join('')}
+            </div>
           </div>
 
-          <div class="p-4 bg-white/90 rounded-2xl border border-emerald-100 space-y-1.5 shadow-sm">
+          <div class="p-4 bg-white/90 rounded-2xl border border-amber-100 space-y-2 shadow-sm">
             <p class="font-bold text-amber-900 text-sm sm:text-base flex items-center">
-              <span class="mr-1.5">☕</span> 3. 일상 속 마음 챙김 루틴
+              <span class="mr-1.5">☕</span> 3. 일상 속 몸·마음 챙김 루틴
             </p>
-            <p class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed">${dailyItem}</p>
+            <p class="text-sm sm:text-base text-gray-800 font-medium leading-relaxed">${routineItem}</p>
           </div>
         `;
       },
